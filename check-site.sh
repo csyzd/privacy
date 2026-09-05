@@ -31,6 +31,21 @@ for d in */; do
 done
 echo "  发现 App 目录: ${APPS[*]}"
 
+# 根索引必须链到每一个 App 目录。
+#
+# **这条是补的（2026-09-05）。** 之前只查了"根索引页存在"，没查它"链到了谁" ——
+# 于是新 App 的目录推上去了、四个页面全 200、check-site 全绿，
+# 但从 /privacy/ 首页点不到它，等于没发布。整套检查里唯一会发现这件事的人是
+# "碰巧去首页看了一眼的那个人"，而没人会去看自己刚发的东西。
+echo "── 根索引覆盖 ──"
+for app in "${APPS[@]}"; do
+    if grep -q "$app/" index.html; then
+        ok "根索引链到 $app"
+    else
+        bad "根索引没链到 $app —— 目录发上去了但首页点不到它"
+    fi
+done
+
 echo "── 每个 App 的必备页面 ──"
 for app in "${APPS[@]}"; do
     for f in privacy.html terms.html; do
